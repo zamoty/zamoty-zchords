@@ -4,9 +4,11 @@ const { active: stageModeActive } = useStageMode()
 
 useHead({
   meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' }
+    { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' },
+    { name: 'theme-color', content: '#14b8a6' }
   ],
   link: [
+    { rel: 'manifest', href: '/manifest.webmanifest' },
     { rel: 'icon', href: '/z-favicon.png', type: 'image/png' }
   ],
   htmlAttrs: {
