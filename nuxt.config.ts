@@ -52,13 +52,16 @@ export default defineNuxtConfig({
   pwa: {
     registerType: 'autoUpdate',
     manifest: {
+      id: '/',
       name: 'ZChords',
       short_name: 'ZChords',
       lang: 'pt-BR',
       description: 'Biblioteca de cifras offline para palco.',
       display: 'standalone',
+      display_override: ['standalone', 'minimal-ui'],
       theme_color: '#14b8a6',
       background_color: '#ffffff',
+      scope: '/',
       start_url: '/songs',
       share_target: {
         action: '/import/share',
@@ -72,9 +75,22 @@ export default defineNuxtConfig({
       },
       icons: [
         {
-          src: '/z-favicon.png',
+          src: '/icon-192.png',
           sizes: '192x192',
-          type: 'image/png'
+          type: 'image/png',
+          purpose: 'any'
+        },
+        {
+          src: '/icon-512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'any'
+        },
+        {
+          src: '/icon-512.png',
+          sizes: '512x512',
+          type: 'image/png',
+          purpose: 'maskable'
         }
       ]
     },
