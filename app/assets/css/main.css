@@ -1,18 +1,84 @@
+/* app/assets/css/main.css */
 @import "tailwindcss";
 @import "@nuxt/ui";
 
-@theme static {
-  --font-sans: 'Public Sans', sans-serif;
+/* Font families: @nuxt/fonts (via Nuxt UI) auto-loads Inter, Rubik, Manrope from CSS declarations */
+@theme {
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-title: 'Rubik', 'Inter', system-ui, sans-serif;
+  --font-chords: 'Manrope', 'Inter', system-ui, sans-serif;
+}
 
-  --color-green-50: #EFFDF5;
-  --color-green-100: #D9FBE8;
-  --color-green-200: #B3F5D1;
-  --color-green-300: #75EDAE;
-  --color-green-400: #00DC82;
-  --color-green-500: #00C16A;
-  --color-green-600: #00A155;
-  --color-green-700: #007F45;
-  --color-green-800: #016538;
-  --color-green-900: #0A5331;
-  --color-green-950: #052E16;
+:root {
+  /* Brand */
+  --ui-primary: oklch(0.71 0.14 205); /* modern cyan */
+  --ui-secondary: oklch(0.552 0.016 285.94);
+
+  --ui-success: oklch(0.723 0.219 149.58);
+  --ui-info: oklch(0.685 0.13 235);
+  --ui-warning: oklch(0.769 0.188 70.08);
+  --ui-error: oklch(0.637 0.237 25.33);
+
+  /* Text */
+  --ui-text-dimmed: var(--ui-color-neutral-400);
+  --ui-text-muted: var(--ui-color-neutral-500);
+  --ui-text-toned: var(--ui-color-neutral-600);
+  --ui-text: var(--ui-color-neutral-700);
+  --ui-text-highlighted: var(--ui-color-neutral-900);
+  --ui-text-inverted: oklch(1 0 0);
+
+  /* Background */
+  --ui-bg: oklch(1 0 0);
+  --ui-bg-muted: var(--ui-color-neutral-50);
+  --ui-bg-elevated: var(--ui-color-neutral-100);
+  --ui-bg-accented: var(--ui-color-neutral-200);
+  --ui-bg-inverted: var(--ui-color-neutral-900);
+
+  /* Borders */
+  --ui-border: var(--ui-color-neutral-200);
+  --ui-border-muted: var(--ui-color-neutral-200);
+  --ui-border-accented: var(--ui-color-neutral-300);
+  --ui-border-inverted: var(--ui-color-neutral-900);
+
+  /* Feel (modern) */
+  --ui-radius: 0.75rem; /* 12px */
+
+  /* Default UI font (aligns with @theme --font-sans) */
+  --ui-font-sans: Inter;
+}
+
+.dark {
+  /* Brand */
+  --ui-primary: oklch(0.80 0.12 205); /* cyan that doesn't scream */
+  --ui-secondary: oklch(0.685 0.169 237.32);
+
+  --ui-success: oklch(0.777 0.204 147.15);
+  --ui-info: oklch(0.75 0.12 235);
+  --ui-warning: oklch(0.824 0.167 72.98);
+  --ui-error: oklch(0.712 0.194 25.18);
+
+  /* Text */
+  --ui-text-dimmed: var(--ui-color-neutral-500);
+  --ui-text-muted: var(--ui-color-neutral-400);
+  --ui-text-toned: var(--ui-color-neutral-300);
+  --ui-text: var(--ui-color-neutral-200);
+  --ui-text-highlighted: oklch(1 0 0);
+  --ui-text-inverted: var(--ui-color-neutral-900);
+
+  /* Background */
+  --ui-bg: var(--ui-color-neutral-900);
+  --ui-bg-muted: var(--ui-color-neutral-800);
+  --ui-bg-elevated: var(--ui-color-neutral-800);
+  --ui-bg-accented: var(--ui-color-neutral-700);
+  --ui-bg-inverted: oklch(1 0 0);
+
+  /* Borders */
+  --ui-border: var(--ui-color-neutral-800);
+  --ui-border-muted: var(--ui-color-neutral-700);
+  --ui-border-accented: var(--ui-color-neutral-700);
+  --ui-border-inverted: oklch(1 0 0);
+
+  /* Keep the feel consistent */
+  --ui-radius: 0.75rem;
+  --ui-font-sans: Inter;
 }

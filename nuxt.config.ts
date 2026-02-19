@@ -5,6 +5,15 @@ export default defineNuxtConfig({
     '@nuxt/ui'
   ],
 
+  /* @nuxt/fonts is auto-registered by Nuxt UI; configure families & weights */
+  fonts: {
+    families: [
+      { name: 'Inter', provider: 'google', weights: [400, 500, 600, 700] },
+      { name: 'Rubik', provider: 'google', weights: [500, 600, 700] },
+      { name: 'Manrope', provider: 'google', weights: [400, 500, 600, 700] }
+    ]
+  },
+
   devtools: {
     enabled: true
   },
