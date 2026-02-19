@@ -1,7 +1,7 @@
 import { neon } from '@neondatabase/serverless'
 import { drizzle } from 'drizzle-orm/neon-http'
 
-export function useDb() {
+export function useServerDb() {
   const config = useRuntimeConfig()
   const connectionString = config.databaseUrl
 

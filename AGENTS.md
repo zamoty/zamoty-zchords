@@ -1,36 +1,31 @@
-```markdown
 # AGENTS.md — ZChords
 
 ## Overview
 
-ZChords is a mobile-first PWA for managing chord sheets and playlists.
-It is offline-first using Dexie (IndexedDB) and syncs to Neon Postgres via Nuxt server routes using Drizzle ORM.
-Single-user. No authentication.
-
----
+ZChords is a mobile-first PWA for personal chord sheets and chord dictionary.
+It is offline-first with Dexie (IndexedDB) and syncs to Neon Postgres through Nuxt server routes using Drizzle ORM.
+Single-user app. No authentication.
 
 ## Core Principles
 
 - Mobile-first always.
 - Offline-first always.
-- Code in English.
-- UI in pt-BR.
-- Keep components small and composable.
+- Code/comments/file names in English.
+- UI copy in pt-BR.
+- Keep components composable and focused.
 - Never block UI due to sync failure.
-
----
 
 ## Architecture
 
 Frontend:
-- Nuxt 3/4
+- Nuxt 4
 - Tailwind v4
-- Nuxt UI
+- Nuxt UI 4
 
 Offline DB:
 - Dexie
-- Tables mirror Neon schema
-- dirty flag for sync tracking
+- Tables mirror Neon syncable tables
+- Local sync flags per row: `dirty`, `syncError`
 
 Backend:
 - Nuxt server routes
@@ -38,49 +33,82 @@ Backend:
 - Neon Postgres
 
 Sync model:
-- Pull then Push
-- last-write-wins via updatedAt
-- Soft deletes via deletedAt
-
----
+- Pull then push
+- last-write-wins via `updatedAt`
+- soft delete via `deletedAt`
 
 ## Data Model
 
 Tables:
-- instruments
-- chord_shapes
-- songs
-- playlists
-- playlist_items
-- meta
+- `instruments`
+- `chord_shapes`
+- `songs`
+- `playlists`
+- `playlist_items`
+- `meta`
 
-All syncable tables must include:
-- id (uuid)
-- createdAt
-- updatedAt
-- deletedAt
+All syncable tables:
+- `id` (uuid)
+- `createdAt`
+- `updatedAt`
+- `deletedAt`
 
-Dexie tables include:
-- dirty (boolean)
-- syncError (nullable)
+Dexie rows include:
+- `dirty` (boolean)
+- `syncError` (nullable)
 
----
+Meta includes:
+- `deviceId`
+- `lastSyncedAt`
+- selected instrument id
 
-## UI Rules
+## Implemented UX (Current)
 
-- Bottom navigation tabs:
-  - Músicas
-  - Playlists
-  - Acordes
-  - Ajustes
-- Stage Mode:
-  - Hide UI chrome
-  - Large font
-  - High contrast
-  - Tap zones for scroll
-- Chords clickable → open modal with diagram
+Navigation tabs:
+- Músicas
+- Playlists
+- Acordes
+- Ajustes
 
----
+Songs:
+- ChordPro render with clickable chords
+- Transpose at render time (Tonal.js)
+- Stage mode with reduced chrome and scroll controls
+- Chord click opens right-side `Slideover` with chord diagram/variations
+
+Chord Dictionary:
+- Two-step flow:
+  - Step 1: root notes grid (`C, C#, D, D#...`)
+  - Step 2: chord names grid for selected root (`C, Cm, C7...`)
+- Clicking chord opens right-side `Slideover` with variation arrows
+- Instrument selection uses icon button + instrument `Slideover` (no plain select)
+
+Styling:
+- Global UI corner radius intentionally low (clean/tighter)
+- Avoid over-rounded components unless necessary
+
+## Chord Data Rules
+
+- Songs remain instrument-agnostic (ChordPro content unchanged by instrument switch).
+- Instrument switch affects only dictionary/diagram lookup.
+- Chord shapes sourced primarily from `@tombatossals/chords-db`.
+- Prefer principal/common variations first (dataset `positionIndex`/`common` tags).
+
+## Seed Notes
+
+`pnpm seed:neon` currently:
+- Upserts instruments
+- Imports guitar + ukulele shapes from `chords-db`
+- Inserts minimal sample shapes for cavaquinho/violas
+- Upserts sample songs
+- Soft-deletes previous `chords-db` chord shapes before re-upserting current set
+
+## Sync/Offline Notes
+
+- App runtime reads from Dexie.
+- Manual sync from `Ajustes` button (`Sincronizar`).
+- Auto-push runs debounced on local mutations while online.
+- Failed push rows remain dirty and keep error details.
 
 ## Typography
 
@@ -88,28 +116,17 @@ Dexie tables include:
 - Title font: Rubik
 - Chord content font: Manrope
 
----
-
-## Important Notes
-
-- Songs stored as ChordPro text.
-- Transposition happens at render time only.
-- Instrument switch affects chord dictionary only.
-- Use Tonal.js for all chord transpositions.
-- Load maximum chord shapes for guitar and ukulele using chords-db dataset.
-
----
-
 ## Development Commands
 
+```bash
 pnpm dev
 pnpm build
-pnpm start
+pnpm preview
 pnpm lint
-pnpm tsc --noEmit
-
-
----
+pnpm typecheck
+pnpm db:migrate
+pnpm seed:neon
+```
 
 ## Do Not
 

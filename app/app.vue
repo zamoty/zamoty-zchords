@@ -1,78 +1,64 @@
-<script setup>
+<script setup lang="ts">
+const { state } = useSync()
+const { active: stageModeActive } = useStageMode()
+
 useHead({
   meta: [
-    { name: 'viewport', content: 'width=device-width, initial-scale=1' }
+    { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' }
   ],
   link: [
     { rel: 'icon', href: '/favicon.ico' }
   ],
   htmlAttrs: {
-    lang: 'en'
+    lang: 'pt-BR'
   }
 })
 
-const title = 'Nuxt Starter Template'
-const description = 'A production-ready starter template powered by Nuxt UI. Build beautiful, accessible, and performant applications in minutes, not hours.'
-
 useSeoMeta({
-  title,
-  description,
-  ogTitle: title,
-  ogDescription: description,
-  ogImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
-  twitterImage: 'https://ui.nuxt.com/assets/templates/nuxt/starter-light.png',
-  twitterCard: 'summary_large_image'
+  title: 'ZChords',
+  description: 'Biblioteca de cifras e acordes offline para palco.',
+  ogTitle: 'ZChords',
+  ogDescription: 'Biblioteca de cifras e acordes offline para palco.'
 })
 </script>
 
 <template>
   <UApp>
-    <UHeader>
-      <template #left>
-        <NuxtLink to="/">
-          <AppLogo class="w-auto h-6 shrink-0" />
-        </NuxtLink>
+    <div class="min-h-dvh bg-gradient-to-b from-primary/5 via-default to-default">
+      <header
+        v-if="!stageModeActive"
+        class="sticky top-0 z-30 border-b border-default/70 bg-default/90 backdrop-blur"
+      >
+        <UContainer class="h-14 flex items-center justify-between gap-3">
+          <div>
+            <p class="font-title text-lg leading-5">
+              ZChords
+            </p>
+            <p class="text-[11px] text-muted leading-4">
+              Offline-first
+            </p>
+          </div>
 
-        <TemplateMenu />
-      </template>
+          <div class="flex items-center gap-2">
+            <SyncIndicator />
+            <UBadge
+              v-if="state.pendingDirtyCount"
+              color="warning"
+              variant="soft"
+            >
+              {{ state.pendingDirtyCount }}
+            </UBadge>
+          </div>
+        </UContainer>
+      </header>
 
-      <template #right>
-        <UColorModeButton />
+      <main :class="stageModeActive ? '' : 'pb-24 pt-4'">
+        <UContainer>
+          <NuxtPage />
+        </UContainer>
+      </main>
 
-        <UButton
-          to="https://github.com/nuxt-ui-templates/starter"
-          target="_blank"
-          icon="i-simple-icons-github"
-          aria-label="GitHub"
-          color="neutral"
-          variant="ghost"
-        />
-      </template>
-    </UHeader>
-
-    <UMain>
-      <NuxtPage />
-    </UMain>
-
-    <USeparator icon="i-simple-icons-nuxtdotjs" />
-
-    <UFooter>
-      <template #left>
-        <p class="text-sm text-muted">
-          Built with Nuxt UI • © {{ new Date().getFullYear() }}
-        </p>
-      </template>
-
-      <template #right>
-        <UButton
-          to="https://github.com/nuxt-ui-templates/starter"
-          target="_blank"
-          icon="i-simple-icons-github"
-          aria-label="GitHub"
-          color="neutral"
-          variant="ghost"
-        />
-      </template>
-    </UFooter>
+      <BottomTabs v-if="!stageModeActive" />
+    </div>
   </UApp>
 </template>

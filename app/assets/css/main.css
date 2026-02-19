@@ -41,7 +41,7 @@
   --ui-border-inverted: var(--ui-color-neutral-900);
 
   /* Feel (modern) */
-  --ui-radius: 0.75rem; /* 12px */
+  --ui-radius: 0.4rem; /* tighter corners */
 
   /* Default UI font (aligns with @theme --font-sans) */
   --ui-font-sans: Inter;
@@ -79,6 +79,6 @@
   --ui-border-inverted: oklch(1 0 0);
 
   /* Keep the feel consistent */
-  --ui-radius: 0.75rem;
+  --ui-radius: 0.4rem;
   --ui-font-sans: Inter;
 }

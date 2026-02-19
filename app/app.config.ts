@@ -1,13 +1,14 @@
 export default defineAppConfig({
   ui: {
+    locale: 'pt-BR',
     colors: {
       primary: 'primary',
       neutral: 'zinc'
     },
 
     container: {
-      // mobile-first, but avoids ultra-wide reading lines on tablets/desktop
-      base: 'w-full max-w-screen-lg mx-auto px-4 sm:px-6 lg:px-8'
+      // Mobile-first width with readable tablet layout.
+      base: 'w-full max-w-screen-md mx-auto px-4 sm:px-6'
     },
 
     select: {
@@ -24,7 +25,6 @@ export default defineAppConfig({
             trailingIcon: 'size-4'
           },
           sm: {
-            // readability bump (mobile-first)
             base: 'px-2.5 py-1.5 text-sm gap-1.5',
             leadingIcon: 'size-4',
             trailingIcon: 'size-4'
@@ -45,49 +45,6 @@ export default defineAppConfig({
             trailingIcon: 'size-6'
           }
         }
-      }
-    },
-
-    dashboardPanel: {
-      slots: {
-        root: '',
-        body: 'p-4'
-      }
-    },
-
-    dashboardSidebar: {
-      slots: {
-        root: '',
-        body: ''
-      }
-    },
-
-    dashboardNavbar: {
-      slots: {
-        root: '',
-        left: '',
-        center: '',
-        right: ''
-      }
-    },
-
-    dashboardToolbar: {
-      slots: {
-        root: ''
-      }
-    },
-
-    navigationMenu: {
-      props: {
-        color: 'primary',
-        variant: 'pill',
-        orientation: 'vertical',
-        highlight: false,
-        highlightColor: 'primary',
-        collapsed: false
-      },
-      slots: {
-        root: 'w-full'
       }
     },
 

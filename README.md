@@ -1,95 +1,127 @@
 # ZChords
-> Offline-first, mobile-first chord sheets and setlist manager for musicians.
 
-ZChords é um Progressive Web App (PWA) pensado para músicos que querem tocar sem distrações.
-Organize cifras, crie playlists, visualize acordes por instrumento e use modo palco com rolagem automática.
+PWA mobile-first para biblioteca de cifras (ChordPro), playlists e dicionário de acordes com funcionamento offline-first.
 
-Simples. Rápido. Offline.
+## Status Atual (Implementado)
 
----
+- Offline-first com Dexie como fonte de runtime.
+- Sync com Neon Postgres via rotas Nuxt + Drizzle (`pull`/`push`, last-write-wins por `updatedAt`, soft delete por `deletedAt`).
+- Seed de instrumentos + acordes (`@tombatossals/chords-db`) + músicas de navegação.
+- Biblioteca de músicas com busca local, visualização ChordPro e transposição em tempo de render.
+- Modo palco com foco no conteúdo, auto-scroll e controles mínimos.
+- Dicionário de acordes em 2 etapas:
+  - etapa 1: notas base (`C, C#, D, D#...`)
+  - etapa 2: acordes da nota selecionada (`C, Cm, C7...`)
+  - clique abre `Slideover` à direita com diagrama grande e navegação de variações.
+- Seletor de instrumento via botão com ícone + `Slideover` de instrumentos (sem `select` padrão).
+- Navegação inferior: Músicas, Playlists, Acordes, Ajustes.
 
-## ✨ Features
+## Stack
 
-- 📱 Mobile-first design
-- 🎵 Biblioteca de músicas (ChordPro)
-- 🔍 Busca por título ou artista
-- 🎸 Dicionário completo de acordes (violão, ukulele + extensível)
-- 🔁 Transposição por semitom
-- 📂 Playlists (Setlists)
-- 🎤 Modo Palco com:
-  - Rolagem automática
-  - Controle de velocidade
-  - Tap scroll (topo sobe / baixo desce)
-- 💾 Offline-first (IndexedDB via Dexie)
-- ☁ Sync manual com Neon (Drizzle + Nuxt server routes)
-
----
-
-## 🧱 Stack
-
-- Nuxt 3/4
+- Nuxt 4 + Nuxt UI 4
 - Tailwind CSS v4
-- Nuxt UI 4.2
 - Dexie (IndexedDB)
-- Drizzle ORM
-- Neon Postgres
+- Drizzle ORM + Neon Postgres
+- `@vite-pwa/nuxt` (Workbox)
 - Tonal.js (transposição)
-- @tombatossals/chords-db (dataset de acordes)
-- @vite-pwa/nuxt (PWA)
+- `@tombatossals/chords-db` (formas de acorde)
 
----
+## Requisitos
 
-## 🛠 Setup
+- Node 20+
+- pnpm 10+
+- `DATABASE_URL` do Neon
+
+## Setup
 
 ```bash
 pnpm install
 cp .env.example .env
+# edite DATABASE_URL
+```
+
+## Banco de dados
+
+```bash
+pnpm db:migrate
+pnpm seed:neon
+```
+
+Alternativa rápida em dev:
+
+```bash
+pnpm db:push
+pnpm seed:neon
+```
+
+## Rodar
+
+```bash
 pnpm dev
 ```
 
-### Build:
+Build/preview:
 
 ```bash
 pnpm build
-pnpm start
+pnpm preview
 ```
 
-### Start:
+## Qualidade
 
 ```bash
-pnpm dev
+pnpm lint
+pnpm typecheck
 ```
-## 📲 PWA Install
 
-**Android:**  
-Abrir no Chrome → Menu → **Adicionar à tela inicial**
+## Sync (Offline-first)
 
-**iOS:**  
-Abrir no Safari → Compartilhar → **Adicionar à Tela de Início**
+- Runtime local: Dexie.
+- Nuvem: Neon (backup/sync).
+- Primeiro bootstrap: pull inicial (`since=1970`) quando base local está vazia.
+- Manual: botão **Sincronizar** em `Ajustes`.
+- Automático: push com debounce quando há `dirty` e conexão online.
+- Erros de push mantêm `dirty=true` e não bloqueiam UI.
 
----
+### Endpoints
 
-## 🎨 Design
+- `GET /api/sync/pull?since=<ISO>&deviceId=<string>`
+- `POST /api/sync/push`
 
-- **Primary:** Modern cyan
-- **Neutral:** Zinc
+## Seed inicial (`pnpm seed:neon`)
 
-**Fonts:**
-- *Inter* → UI
-- *Rubik* → Títulos
-- *Manrope* → Conteúdo de cifra
+Popula:
 
----
+- Instrumentos: Violão, Ukulele, Cavaquinho, Viola caipira (3 afinações).
+- Formas de acorde: carga máxima para violão/ukulele do dataset `chords-db`.
+- Formas mínimas para cavaquinho/violas (MVP).
+- Músicas tradicionais curtas para navegação.
 
-## 🧠 Architecture Notes
+O seed é idempotente para acordes (upsert por `id` determinístico) e marca dados antigos de acordes com soft delete.
 
-- Songs are instrument-agnostic.
-- Instrument selection only affects chord shapes display.
-- Sync is last-write-wins.
-- No authentication (single-user model).
+## Rotas principais
 
----
+- `/songs`
+- `/playlists`
+- `/chords`
+- `/settings`
 
-## 📄 License
+## Instalação PWA
 
-MIT © Tommy
+- Android (Chrome): Menu -> **Adicionar à tela inicial**
+- iOS (Safari): Compartilhar -> **Adicionar à Tela de Início**
+
+## Notas importantes
+
+- Sem autenticação (single-user).
+- `deviceId` local persistido em Dexie (`meta`).
+- Troca de instrumento altera diagramas/dicionário, não o conteúdo da música.
+- Transposição é aplicada somente na renderização.
+- Visual atual prioriza cantos mais discretos (raio global reduzido).
+
+## Troubleshooting Rápido
+
+Se mudar parser/seed de acordes e os dados parecerem antigos:
+
+1. `pnpm seed:neon`
+2. No app: `Ajustes -> Sincronizar`

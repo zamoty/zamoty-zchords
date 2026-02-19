@@ -1,28 +1,29 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  runtimeConfig: {
-    databaseUrl: process.env.DATABASE_URL ?? ''
-  },
-
   modules: [
     '@nuxt/eslint',
-    '@nuxt/ui'
+    '@nuxt/ui',
+    '@vite-pwa/nuxt'
   ],
 
-  /* @nuxt/fonts is auto-registered by Nuxt UI; configure families & weights */
-  fonts: {
-    families: [
-      { name: 'Inter', provider: 'google', weights: [400, 500, 600, 700] },
-      { name: 'Rubik', provider: 'google', weights: [500, 600, 700] },
-      { name: 'Manrope', provider: 'google', weights: [400, 500, 600, 700] }
-    ]
-  },
+  ssr: false,
+
+  components: [
+    {
+      path: '~/components',
+      pathPrefix: false
+    }
+  ],
 
   devtools: {
     enabled: true
   },
 
   css: ['~/assets/css/main.css'],
+
+  runtimeConfig: {
+    databaseUrl: process.env.DATABASE_URL ?? ''
+  },
 
   routeRules: {
     '/': { prerender: true }
@@ -36,6 +37,68 @@ export default defineNuxtConfig({
         commaDangle: 'never',
         braceStyle: '1tbs'
       }
+    }
+  },
+
+  /* @nuxt/fonts is auto-registered by Nuxt UI; configure families & weights */
+  fonts: {
+    families: [
+      { name: 'Inter', provider: 'google', weights: [400, 500, 600, 700] },
+      { name: 'Rubik', provider: 'google', weights: [500, 600, 700] },
+      { name: 'Manrope', provider: 'google', weights: [400, 500, 600, 700] }
+    ]
+  },
+
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: 'ZChords',
+      short_name: 'ZChords',
+      lang: 'pt-BR',
+      description: 'Biblioteca de cifras offline para palco.',
+      display: 'standalone',
+      theme_color: '#14b8a6',
+      background_color: '#ffffff',
+      start_url: '/songs',
+      icons: [
+        {
+          src: '/favicon.ico',
+          sizes: '64x64',
+          type: 'image/x-icon'
+        }
+      ]
+    },
+    workbox: {
+      navigateFallback: '/songs',
+      globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
+      runtimeCaching: [
+        {
+          urlPattern: ({ request }) => request.destination === 'document',
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'pages-cache',
+            networkTimeoutSeconds: 3
+          }
+        },
+        {
+          urlPattern: ({ request }) => ['style', 'script', 'worker'].includes(request.destination),
+          handler: 'StaleWhileRevalidate',
+          options: {
+            cacheName: 'assets-cache'
+          }
+        },
+        {
+          urlPattern: ({ request }) => request.destination === 'image',
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'images-cache',
+            expiration: {
+              maxEntries: 100,
+              maxAgeSeconds: 60 * 60 * 24 * 30
+            }
+          }
+        }
+      ]
     }
   }
 })
