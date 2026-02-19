@@ -62,9 +62,9 @@ export default defineNuxtConfig({
       start_url: '/songs',
       icons: [
         {
-          src: '/favicon.ico',
-          sizes: '64x64',
-          type: 'image/x-icon'
+          src: '/z-favicon.png',
+          sizes: '192x192',
+          type: 'image/png'
         }
       ]
     },

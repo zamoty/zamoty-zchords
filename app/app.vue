@@ -7,7 +7,7 @@ useHead({
     { name: 'viewport', content: 'width=device-width, initial-scale=1, viewport-fit=cover' }
   ],
   link: [
-    { rel: 'icon', href: '/favicon.ico' }
+    { rel: 'icon', href: '/z-favicon.png', type: 'image/png' }
   ],
   htmlAttrs: {
     lang: 'pt-BR'
