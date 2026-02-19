@@ -9,6 +9,16 @@ const installing = ref(false)
 const online = ref(import.meta.client ? navigator.onLine : true)
 const syncing = ref(false)
 const deviceId = ref<string | null>(null)
+const pwaStatus = reactive({
+  secureContext: false,
+  standalone: false,
+  serviceWorkerSupported: false,
+  serviceWorkerController: false,
+  serviceWorkerRegistration: false,
+  manifestLinkPresent: false,
+  manifestFetchOk: false,
+  serviceWorkerFetchOk: false
+})
 
 function handleOnline() {
   online.value = true
@@ -41,8 +51,49 @@ async function handleInstallApp() {
   }
 }
 
+async function refreshPwaDiagnostics() {
+  if (!import.meta.client) {
+    return
+  }
+
+  pwaStatus.secureContext = window.isSecureContext
+  pwaStatus.standalone = window.matchMedia('(display-mode: standalone)').matches
+  pwaStatus.serviceWorkerSupported = 'serviceWorker' in navigator
+  pwaStatus.manifestLinkPresent = Boolean(document.querySelector('link[rel="manifest"]'))
+
+  try {
+    const manifestResponse = await fetch('/manifest.webmanifest', { cache: 'no-store' })
+    pwaStatus.manifestFetchOk = manifestResponse.ok
+  } catch {
+    pwaStatus.manifestFetchOk = false
+  }
+
+  try {
+    const swResponse = await fetch('/sw.js', { cache: 'no-store' })
+    pwaStatus.serviceWorkerFetchOk = swResponse.ok
+  } catch {
+    pwaStatus.serviceWorkerFetchOk = false
+  }
+
+  if (!pwaStatus.serviceWorkerSupported) {
+    pwaStatus.serviceWorkerController = false
+    pwaStatus.serviceWorkerRegistration = false
+    return
+  }
+
+  pwaStatus.serviceWorkerController = Boolean(navigator.serviceWorker.controller)
+
+  try {
+    const registration = await navigator.serviceWorker.getRegistration()
+    pwaStatus.serviceWorkerRegistration = Boolean(registration)
+  } catch {
+    pwaStatus.serviceWorkerRegistration = false
+  }
+}
+
 onMounted(async () => {
   await loadDeviceId()
+  await refreshPwaDiagnostics()
 
   window.addEventListener('online', handleOnline)
   window.addEventListener('offline', handleOffline)
@@ -122,6 +173,65 @@ onBeforeUnmount(() => {
         >
           Se “Instalar app” não aparecer no menu do Chrome, use “Adicionar à tela inicial”.
         </p>
+
+        <UButton
+          label="Atualizar diagnóstico PWA"
+          icon="i-lucide-scan-search"
+          color="neutral"
+          variant="outline"
+          @click="refreshPwaDiagnostics"
+        />
+
+        <div class="grid grid-cols-2 gap-2 text-xs">
+          <UBadge
+            color="neutral"
+            variant="soft"
+          >
+            secure: {{ pwaStatus.secureContext ? 'ok' : 'falha' }}
+          </UBadge>
+          <UBadge
+            color="neutral"
+            variant="soft"
+          >
+            standalone: {{ pwaStatus.standalone ? 'sim' : 'não' }}
+          </UBadge>
+          <UBadge
+            color="neutral"
+            variant="soft"
+          >
+            SW support: {{ pwaStatus.serviceWorkerSupported ? 'ok' : 'falha' }}
+          </UBadge>
+          <UBadge
+            color="neutral"
+            variant="soft"
+          >
+            SW reg: {{ pwaStatus.serviceWorkerRegistration ? 'ok' : 'falha' }}
+          </UBadge>
+          <UBadge
+            color="neutral"
+            variant="soft"
+          >
+            SW ctrl: {{ pwaStatus.serviceWorkerController ? 'ok' : 'falha' }}
+          </UBadge>
+          <UBadge
+            color="neutral"
+            variant="soft"
+          >
+            manifest link: {{ pwaStatus.manifestLinkPresent ? 'ok' : 'falha' }}
+          </UBadge>
+          <UBadge
+            color="neutral"
+            variant="soft"
+          >
+            manifest fetch: {{ pwaStatus.manifestFetchOk ? 'ok' : 'falha' }}
+          </UBadge>
+          <UBadge
+            color="neutral"
+            variant="soft"
+          >
+            sw.js fetch: {{ pwaStatus.serviceWorkerFetchOk ? 'ok' : 'falha' }}
+          </UBadge>
+        </div>
       </div>
     </UCard>
 
