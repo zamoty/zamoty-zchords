@@ -3,6 +3,8 @@ import { getDeviceId } from '~/services/db/metaRepository.client'
 
 const db = useDb()
 const { state, syncNow } = useSync()
+const { canInstall, promptInstall } = useInstallPrompt()
+const installing = ref(false)
 
 const online = ref(import.meta.client ? navigator.onLine : true)
 const syncing = ref(false)
@@ -26,6 +28,16 @@ async function handleSyncNow() {
     await syncNow()
   } finally {
     syncing.value = false
+  }
+}
+
+async function handleInstallApp() {
+  installing.value = true
+
+  try {
+    await promptInstall()
+  } finally {
+    installing.value = false
   }
 }
 
@@ -85,6 +97,31 @@ onBeforeUnmount(() => {
           :loading="syncing || state.status === 'syncing'"
           @click="handleSyncNow"
         />
+      </div>
+    </UCard>
+
+    <UCard>
+      <template #header>
+        <p class="font-semibold">
+          Aplicativo
+        </p>
+      </template>
+
+      <div class="space-y-3">
+        <UButton
+          v-if="canInstall"
+          label="Instalar app"
+          icon="i-lucide-download"
+          :loading="installing"
+          @click="handleInstallApp"
+        />
+
+        <p
+          v-else
+          class="text-sm text-muted"
+        >
+          Se “Instalar app” não aparecer no menu do Chrome, use “Adicionar à tela inicial”.
+        </p>
       </div>
     </UCard>
 

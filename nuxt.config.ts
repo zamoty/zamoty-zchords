@@ -62,7 +62,7 @@ export default defineNuxtConfig({
       theme_color: '#14b8a6',
       background_color: '#ffffff',
       scope: '/',
-      start_url: '/songs',
+      start_url: '/',
       share_target: {
         action: '/import/share',
         method: 'GET',
@@ -95,7 +95,7 @@ export default defineNuxtConfig({
       ]
     },
     workbox: {
-      navigateFallback: '/songs',
+      navigateFallback: '/',
       globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}'],
       runtimeCaching: [
         {
