@@ -97,11 +97,21 @@ onMounted(async () => {
         </p>
       </div>
 
-      <UButton
-        label="Nova"
-        icon="i-lucide-plus"
-        @click="openNewSongModal"
-      />
+      <div class="flex items-center gap-2">
+        <UButton
+          to="/import/share"
+          label="Importar"
+          icon="i-lucide-share-2"
+          color="neutral"
+          variant="outline"
+        />
+
+        <UButton
+          label="Nova"
+          icon="i-lucide-plus"
+          @click="openNewSongModal"
+        />
+      </div>
     </div>
 
     <UInput

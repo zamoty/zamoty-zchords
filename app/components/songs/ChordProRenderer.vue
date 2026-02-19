@@ -20,7 +20,10 @@ const parsedLines = computed(() => parseChordPro(props.content, props.semitones)
       :key="`${lineIndex}-${line.raw}`"
       class="min-w-full"
     >
-      <div class="relative h-6 whitespace-pre text-primary">
+      <div
+        v-if="line.placements.length > 0"
+        class="relative h-6 whitespace-pre text-primary"
+      >
         <span class="invisible select-none">{{ line.chordLine || ' ' }}</span>
 
         <button
@@ -35,7 +38,7 @@ const parsedLines = computed(() => parseChordPro(props.content, props.semitones)
         </button>
       </div>
 
-      <p class="whitespace-pre min-h-7">
+      <p :class="line.placements.length > 0 ? 'whitespace-pre min-h-7' : 'whitespace-pre'">
         {{ line.lyric || ' ' }}
       </p>
     </div>

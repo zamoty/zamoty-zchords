@@ -60,6 +60,16 @@ export default defineNuxtConfig({
       theme_color: '#14b8a6',
       background_color: '#ffffff',
       start_url: '/songs',
+      share_target: {
+        action: '/import/share',
+        method: 'GET',
+        enctype: 'application/x-www-form-urlencoded',
+        params: {
+          title: 'title',
+          text: 'text',
+          url: 'url'
+        }
+      },
       icons: [
         {
           src: '/z-favicon.png',
